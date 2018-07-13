@@ -42,9 +42,9 @@ public class ImageUtil extends CordovaPlugin {
     private static final String TIME_FORMAT = "yyyyMMdd_HHmmss";
 
     private int maxWidthOrHeight = 2048;
-    private int maxCompressQuality = 90;
-    private int maxImageSize = 5 * 1024 * 1024; // 5mb
-    private int maxUnCompressSize = 512 * 1024; // 512kb
+    private int compressQuality = 90;
+    private int maxImageByteSize = 5 * 1024 * 1024; // 5mb
+    private int minNeedcompressByteSize = 512 * 1024; // 512kb
     private boolean autoCrop = false;
 
     @Override
@@ -52,9 +52,9 @@ public class ImageUtil extends CordovaPlugin {
         if (action.equals("getImages")) {
             String pathStr = args.getString(0);
             this.maxWidthOrHeight = args.getInt(1);
-            this.maxCompressQuality = args.getInt(2);
-            this.maxImageSize = args.getInt(3);
-            this.maxUnCompressSize = args.getInt(4);
+            this.compressQuality = args.getInt(2);
+            this.maxImageByteSize = args.getInt(3);
+            this.minNeedcompressByteSize = args.getInt(4);
             this.autoCrop = args.getBoolean(5);
             this.getImages(callbackContext, pathStr);
             return true;
@@ -65,8 +65,8 @@ public class ImageUtil extends CordovaPlugin {
     private void getImages(CallbackContext callbackContext, String pathStr) {
         LOG.d(LOG_TAG,
                 "getImages pathStr:" + pathStr + "   maxWidthOrHeight:" + maxWidthOrHeight + "  maxCompressQuality:"
-                        + maxCompressQuality + "  maxImageSize:" + maxImageSize / 1024 + "kb" + "  maxUnCompressSize:"
-                        + maxUnCompressSize / 1024 + "kb  autoCrop:" + autoCrop);
+                        + compressQuality + "  maxImageSize:" + maxImageByteSize / 1024 + "kb" + "  maxUnCompressSize:"
+                        + minNeedcompressByteSize / 1024 + "kb  autoCrop:" + autoCrop);
         String[] paths = pathStr.split(",");
         JSONArray ja = new JSONArray();
         for (int i = 0; i < paths.length; ++i) {
@@ -108,10 +108,11 @@ public class ImageUtil extends CordovaPlugin {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(CompressFormat.JPEG, 100, baos);// 质量压缩方法，这里100表示不压缩，
         int sourceLength = baos.toByteArray().length;
-        if (sourceLength > this.maxImageSize) {
-            compressImage(bitmap, this.maxCompressQuality, this.maxImageSize, CompressFormat.JPEG, baos);
-        } else if (sourceLength > this.maxUnCompressSize) {
-            compressImage(bitmap, this.maxCompressQuality, sourceLength, CompressFormat.JPEG, baos);
+        //if (sourceLength > this.maxImageSize) {
+        //    compressImage(bitmap, this.compressQuality, this.maxImageSize, CompressFormat.JPEG, baos);
+        //} else if (sourceLength > this.minNeedcompressSize) {
+        if (sourceLength > this.minNeedcompressByteSize) {
+            compressImage(bitmap, this.compressQuality, sourceLength, CompressFormat.JPEG, baos);
         }
         LOG.d(LOG_TAG, "sourcePath:" + sourcePath + "   sourceLength:" + sourceLength / 1024 + "kb  compressLength:"
                 + baos.toByteArray().length / 1024 + "kb");
