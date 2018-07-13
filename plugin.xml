@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="com.matrixgz.cordova-plugin-imageutil" version="1.0.0" 
+    xmlns="http://apache.org/cordova/ns/plugins/1.0" 
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>ImageUtil</name>
+    <js-module name="ImageUtil" src="www/ImageUtil.js">
+        <clobbers target="cordova.plugins.ImageUtil" />
+    </js-module>
+    <platform name="android">
+        <config-file parent="/*" target="res/xml/config.xml">
+            <feature name="ImageUtil">
+                <param name="android-package" value="com.matrixgz.cordova.plugin.ImageUtil" />
+
+            </feature>
+        </config-file>
+        <config-file parent="/*" target="AndroidManifest.xml"></config-file>
+        <source-file src="src/android/ImageUtil.java" target-dir="src/com/matrixgz/cordova/plugin" />
+        <source-file src="src/android/FileHelper.java" target-dir="src/com/matrixgz/cordova/plugin" />
+        <source-file src="src/android/ExifHelper.java" target-dir="src/com/matrixgz/cordova/plugin" />
+    </platform>
+</plugin>
